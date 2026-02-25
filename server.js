@@ -6,7 +6,9 @@ const path = require('path');
 const db = require('./database');
 
 const Stripe = require('stripe');
-const stripe = Stripe('pk_test_51T4aMU0mkOiOdoBNUnE3j8qQE64Y3rz2oez6glzVj2hLVjOOEcXvfQk8ogkPRNprEmCie78EZCASNKHQnwLYUuhr00sYvw30Vw');
+const stripeSecret = process.env.STRIPE_SECRET_KEY || 'pk_test_51T4aMU0mkOiOdoBNUnE3j8qQE64Y3rz2oez6glzVj2hLVjOOEcXvfQk8ogkPRNprEmCie78EZCASNKHQnwLYUuhr00sYvw30Vw';
+const stripe = Stripe(stripeSecret);
+const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || 'whsec_test_webhook_secret';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -316,7 +318,7 @@ app.post('/api/webhook/stripe', express.raw({ type: 'application/json' }), (req,
   let event;
   
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, 'whsec_test_webhook_secret');
+    event = stripe.webhooks.constructEvent(req.body, sig, STRIPE_WEBHOOK_SECRET);
   } catch (err) {
     console.error('Webhook signature verification failed:', err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);

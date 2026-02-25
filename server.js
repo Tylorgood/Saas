@@ -5,10 +5,17 @@ const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const db = require('./database');
 
-const Stripe = require('stripe');
+let stripe = null;
 const stripeSecret = process.env.STRIPE_SECRET_KEY;
-const stripe = Stripe(stripeSecret);
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
+
+if (stripeSecret) {
+  const Stripe = require('stripe');
+  stripe = Stripe(stripeSecret);
+  console.log('Stripe initialized');
+} else {
+  console.log('Stripe not configured - payments disabled');
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -272,6 +279,10 @@ app.get('/pay', (req, res) => {
 });
 
 app.post('/api/create-checkout-session', async (req, res) => {
+  if (!stripe) {
+    return res.status(503).json({ error: 'Stripe not configured' });
+  }
+  
   try {
     const { invoiceId } = req.body;
     
@@ -308,12 +319,16 @@ app.post('/api/create-checkout-session', async (req, res) => {
     
     res.json({ url: session.url });
   } catch (error) {
-    console.error('Stripe error:', error);
-    res.status(500).json({ error: 'Payment failed' });
+    console.error('Stripe error:', error.message);
+    res.status(500).json({ error: error.message });
   }
 });
 
 app.post('/api/webhook/stripe', express.raw({ type: 'application/json' }), (req, res) => {
+  if (!stripe) {
+    return res.status(503).json({ error: 'Stripe not configured' });
+  }
+  
   const sig = req.headers['stripe-signature'];
   let event;
   

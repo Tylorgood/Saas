@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pay Invoice - CashFlow AI</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #0a0a0f; color: #e4e4e7; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+    .card { background: #12121a; border: 1px solid #2a2a3a; border-radius: 16px; padding: 2.5rem; max-width: 450px; width: 100%; }
+    .logo { font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem; }
+    .logo span { color: #6366f1; }
+    h1 { font-size: 1.5rem; margin-bottom: 1rem; }
+    .invoice-info { background: #1a1a25; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
+    .row { display: flex; justify-content: space-between; margin-bottom: 0.75rem; }
+    .row:last-child { margin-bottom: 0; font-weight: 600; font-size: 1.25rem; }
+    .label { color: #a1a1aa; }
+    .amount { color: #22c55e; }
+    .btn { display: block; width: 100%; padding: 1rem; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+    .btn-primary { background: #6366f1; color: #fff; }
+    .btn-primary:hover { background: #818cf8; }
+    .btn-secondary { background: transparent; border: 1px solid #2a2a3a; color: #e4e4e7; margin-top: 1rem; }
+    .success { text-align: center; }
+    .success-icon { font-size: 4rem; margin-bottom: 1rem; }
+    .success h2 { color: #22c55e; margin-bottom: 0.5rem; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">CashFlow <span>AI</span></div>
+    
+    <div id="invoiceView">
+      <h1>Invoice Payment</h1>
+      <div class="invoice-info">
+        <div class="row">
+          <span class="label">Invoice #</span>
+          <span id="invoiceNumber">-</span>
+        </div>
+        <div class="row">
+          <span class="label">From</span>
+          <span id="fromName">-</span>
+        </div>
+        <div class="row">
+          <span class="label">Due Date</span>
+          <span id="dueDate">-</span>
+        </div>
+        <div class="row">
+          <span class="label">Amount</span>
+          <span class="amount" id="amount">$0.00</span>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="simulatePayment()">Pay Now</button>
+      <button class="btn btn-secondary" onclick="window.close()">Close</button>
+    </div>
+    
+    <div id="successView" class="success hidden">
+      <div class="success-icon">✓</div>
+      <h2>Payment Successful!</h2>
+      <p style="color: #a1a1aa; margin-top: 0.5rem;">Thank you for your payment.</p>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const data = params.get('d');
+    
+    if (data) {
+      try {
+        const decoded = JSON.parse(atob(data));
+        document.getElementById('invoiceNumber').textContent = decoded.inv || 'INV-0001';
+        document.getElementById('fromName').textContent = decoded.from || 'Business';
+        document.getElementById('dueDate').textContent = decoded.due || 'N/A';
+        document.getElementById('amount').textContent = '$' + parseFloat(decoded.amt || 0).toFixed(2);
+      } catch(e) {
+        console.log('Invalid data');
+      }
+    }
+    
+    function simulatePayment() {
+      document.getElementById('invoiceView').classList.add('hidden');
+      document.getElementById('successView').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "cashflow-ai",
+  "version": "1.0.0",
+  "description": "AI-powered financial automation for solopreneurs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "reminders": "node scripts/reminders.js",
+    "report": "node scripts/weekly-report.js",
+    "billing": "node scripts/billing-automation.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "uuid": "^9.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

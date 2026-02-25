@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CashFlow AI - Financial Automation</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <div class="logo">CashFlow <span class="accent">AI</span></div>
+      <nav class="nav" id="nav">
+        <a href="#" class="nav-link active" data-page="dashboard">Dashboard</a>
+        <a href="#" class="nav-link" data-page="invoices">Invoices</a>
+        <a href="#" class="nav-link" data-page="clients">Clients</a>
+        <a href="#" class="nav-link" data-page="expenses">Expenses</a>
+        <a href="#" class="nav-link" data-page="subscriptions">Subscriptions</a>
+        <button class="btn-logout" id="logoutBtn">Logout</button>
+      </nav>
+    </header>
+
+    <main class="main" id="main">
+      <!-- Login Page -->
+      <div class="auth-page" id="authPage">
+        <div class="auth-card">
+          <h1>CashFlow <span class="accent">AI</span></h1>
+          <p class="tagline">AI-powered financial automation</p>
+          
+          <div class="tabs">
+            <button class="tab active" data-tab="login">Login</button>
+            <button class="tab" data-tab="register">Register</button>
+          </div>
+          
+          <form id="loginForm" class="auth-form">
+            <input type="email" placeholder="Email" required>
+            <input type="password" placeholder="Password" required>
+            <button type="submit" class="btn-primary">Login</button>
+          </form>
+          
+          <form id="registerForm" class="auth-form hidden">
+            <input type="text" placeholder="Name" required>
+            <input type="email" placeholder="Email" required>
+            <input type="password" placeholder="Password" required>
+            <button type="submit" class="btn-primary">Create Account</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Dashboard Page -->
+      <div class="page hidden" id="dashboardPage">
+        <h2>Financial Dashboard</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Revenue</div>
+            <div class="stat-value positive" id="totalRevenue">$0.00</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Pending Invoices</div>
+            <div class="stat-value pending" id="pendingRevenue">$0.00</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Expenses</div>
+            <div class="stat-value negative" id="totalExpenses">$0.00</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Net Profit</div>
+            <div class="stat-value" id="netProfit">$0.00</div>
+          </div>
+        </div>
+        
+        <div class="dashboard-grid">
+          <div class="card">
+            <h3>Quick Actions</h3>
+            <div class="action-buttons">
+              <button class="btn-action" data-action="new-invoice">+ New Invoice</button>
+              <button class="btn-action" data-action="new-client">+ New Client</button>
+              <button class="btn-action" data-action="new-expense">+ New Expense</button>
+            </div>
+          </div>
+          
+          <div class="card">
+            <h3>Recent Invoices</h3>
+            <div id="recentInvoices"></div>
+          </div>
+          
+          <div class="card">
+            <h3>Upcoming Subscriptions</h3>
+            <div id="upcomingSubscriptions"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Invoices Page -->
+      <div class="page hidden" id="invoicesPage">
+        <div class="page-header">
+          <h2>Invoices</h2>
+          <button class="btn-primary" id="newInvoiceBtn">+ New Invoice</button>
+        </div>
+        
+        <div class="filters">
+          <select id="invoiceFilter">
+            <option value="all">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="paid">Paid</option>
+          </select>
+        </div>
+        
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Invoice #</th>
+                <th>Client</th>
+                <th>Amount</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="invoicesTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Clients Page -->
+      <div class="page hidden" id="clientsPage">
+        <div class="page-header">
+          <h2>Clients</h2>
+          <button class="btn-primary" id="newClientBtn">+ New Client</button>
+        </div>
+        
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Company</th>
+                <th>Email</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody id="clientsTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Expenses Page -->
+      <div class="page hidden" id="expensesPage">
+        <div class="page-header">
+          <h2>Expenses</h2>
+          <button class="btn-primary" id="newExpenseBtn">+ New Expense</button>
+        </div>
+        
+        <div class="filters">
+          <select id="expenseCategory">
+            <option value="all">All Categories</option>
+            <option value="Software">Software</option>
+            <option value="Hardware">Hardware</option>
+            <option value="Services">Services</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Travel">Travel</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody id="expensesTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Subscriptions Page -->
+      <div class="page hidden" id="subscriptionsPage">
+        <div class="page-header">
+          <h2>Recurring Subscriptions</h2>
+          <button class="btn-primary" id="newSubscriptionBtn">+ New Subscription</button>
+        </div>
+        
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Client</th>
+                <th>Amount</th>
+                <th>Frequency</th>
+                <th>Next Billing</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="subscriptionsTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <!-- Modals -->
+    <div class="modal hidden" id="modal">
+      <div class="modal-content">
+        <button class="modal-close" id="modalClose">&times;</button>
+        <div id="modalBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

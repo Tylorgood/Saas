@@ -1,0 +1,8 @@
+node_modules/
+*.log
+.env
+.env.local
+database.json
+.DS_Store
+*.swp
+*.swo

@@ -166,6 +166,16 @@
       <p>Join thousands of solopreneurs who save 10+ hours every month.</p>
       <a href="/app" class="btn-primary large">Start Free Today</a>
     </section>
+
+    <section class="waitlist">
+      <h2>Get Early Access to Pro Features</h2>
+      <p>Be the first to know when we launch advanced automation features.</p>
+      <form class="waitlist-form" id="waitlistForm">
+        <input type="email" placeholder="Enter your email" required>
+        <button type="submit" class="btn-primary">Join Waitlist</button>
+      </form>
+      <p id="waitlistMsg" class="waitlist-msg hidden">Thanks! You're on the list.</p>
+    </section>
   </main>
 
   <footer>
@@ -185,5 +195,27 @@
       <p>&copy; 2026 CashFlow AI. All rights reserved.</p>
     </div>
   </footer>
+  
+  <script>
+    document.getElementById('waitlistForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = e.target.querySelector('input').value;
+      
+      try {
+        const res = await fetch('/api/waitlist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        
+        if (res.ok) {
+          document.getElementById('waitlistForm').classList.add('hidden');
+          document.getElementById('waitlistMsg').classList.remove('hidden');
+        }
+      } catch(err) {
+        console.log('Error joining waitlist');
+      }
+    });
+  </script>
 </body>
 </html>

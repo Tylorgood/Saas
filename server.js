@@ -228,6 +228,15 @@ app.get('/api/subscriptions', authenticateToken, (req, res) => {
   res.json({ subscriptions });
 });
 
+app.post('/api/waitlist', (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ error: 'Email required' });
+  }
+  db.addToWaitlist({ email });
+  res.json({ success: true });
+});
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'landing.html'));
 });

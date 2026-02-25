@@ -8,7 +8,8 @@ let db = {
   clients: [],
   invoices: [],
   expenses: [],
-  subscriptions: []
+  subscriptions: [],
+  waitlist: []
 };
 
 function loadDb() {
@@ -140,6 +141,20 @@ function getSubscriptions(userId) {
     .sort((a, b) => new Date(a.next_billing) - new Date(b.next_billing));
 }
 
+function addToWaitlist(entry) {
+  if (!db.waitlist) db.waitlist = [];
+  const exists = db.waitlist.find(w => w.email === entry.email);
+  if (!exists) {
+    db.waitlist.push({ ...entry, created_at: new Date().toISOString() });
+    saveDb();
+  }
+  return entry;
+}
+
+function getWaitlist() {
+  return db.waitlist || [];
+}
+
 module.exports = {
   initDatabase,
   createUser,
@@ -154,5 +169,7 @@ module.exports = {
   getExpenses,
   getFinancialSummary,
   createSubscription,
-  getSubscriptions
+  getSubscriptions,
+  addToWaitlist,
+  getWaitlist
 };

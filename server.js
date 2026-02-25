@@ -237,6 +237,23 @@ app.post('/api/waitlist', (req, res) => {
   res.json({ success: true });
 });
 
+app.get('/api/cron/:action', (req, res) => {
+  const { action } = req.params;
+  
+  if (action === 'stats') {
+    const stats = {
+      users: db.users.length,
+      clients: db.clients.length,
+      invoices: db.invoices.length,
+      revenue: db.invoices.filter(i => i.status === 'paid').reduce((sum, i) => sum + i.amount, 0),
+      waitlist: db.waitlist ? db.waitlist.length : 0
+    };
+    return res.json(stats);
+  }
+  
+  res.json({ error: 'Unknown action' });
+});
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'landing.html'));
 });

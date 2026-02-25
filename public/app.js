@@ -536,6 +536,25 @@ document.getElementById('newInvoiceBtn')?.addEventListener('click', () => openMo
 document.getElementById('newClientBtn')?.addEventListener('click', () => openModal('client'));
 document.getElementById('newExpenseBtn')?.addEventListener('click', () => openModal('expense'));
 document.getElementById('newSubscriptionBtn')?.addEventListener('click', () => openModal('subscription'));
+document.getElementById('testPaymentBtn')?.addEventListener('click', async () => {
+  try {
+    const res = await fetch('/api/test-payment', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      alert('Error: ' + data.error);
+    }
+  } catch(err) {
+    alert('Error: ' + err.message);
+  }
+});
 
 // Init
 if (token) {

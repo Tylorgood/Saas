@@ -284,15 +284,18 @@ app.post('/api/create-checkout-session', async (req, res) => {
   }
   
   try {
-    const { invoiceId } = req.body;
+    const { invoiceId, amount, description } = req.body;
     
     let invoice;
+    let payAmount = amount || 1000; // $10 default
+    let payDesc = description || 'Test Payment';
+    
     if (invoiceId) {
       invoice = db.invoices.find(i => i.id === invoiceId);
-    }
-    
-    if (!invoice) {
-      return res.status(404).json({ error: 'Invoice not found' });
+      if (invoice) {
+        payAmount = invoice.amount;
+        payDesc = `Invoice ${invoice.invoice_number}`;
+      }
     }
     
     const session = await stripe.checkout.sessions.create({
@@ -301,25 +304,54 @@ app.post('/api/create-checkout-session', async (req, res) => {
         price_data: {
           currency: 'usd',
           product_data: {
-            name: `Invoice ${invoice.invoice_number}`,
-            description: `Payment for ${invoice.invoice_number}`
+            name: payDesc,
+            description: 'Payment via CashFlow AI'
           },
-          unit_amount: Math.round(invoice.amount * 100)
+          unit_amount: Math.round(payAmount * 100)
         },
         quantity: 1
       }],
       mode: 'payment',
-      success_url: `${req.protocol}://${req.get('host')}/pay?success=true&id=${invoice.id}`,
-      cancel_url: `${req.protocol}://${req.get('host')}/pay?canceled=true&id=${invoice.id}`,
+      success_url: `${req.protocol}://${req.get('host')}/pay?success=true&id=${invoice?.id || 'test'}`,
+      cancel_url: `${req.protocol}://${req.get('host')}/pay?canceled=true`,
       metadata: {
-        invoice_id: invoice.id,
-        invoice_number: invoice.invoice_number
+        invoice_id: invoice?.id || 'test',
+        invoice_number: invoice?.invoice_number || 'TEST-001'
       }
+    });
+    
+    res.json({ url: session.url, sessionId: session.id });
+  } catch (error) {
+    console.error('Stripe error:', error.message, error.stack);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/test-payment', async (req, res) => {
+  if (!stripe) {
+    return res.status(503).json({ error: 'Stripe not configured' });
+  }
+  
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [{
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: 'Test Payment - CashFlow AI'
+          },
+          unit_amount: 1000 // $10.00
+        },
+        quantity: 1
+      }],
+      mode: 'payment',
+      success_url: `${req.protocol}://${req.get('host')}/pay?success=true`,
+      cancel_url: `${req.protocol}://${req.get('host')}/pay?canceled=true`
     });
     
     res.json({ url: session.url });
   } catch (error) {
-    console.error('Stripe error:', error.message);
     res.status(500).json({ error: error.message });
   }
 });

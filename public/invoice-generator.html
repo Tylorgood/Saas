@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Invoice Generator - Professional Invoices in Seconds</title>
+  <meta name="description" content="Generate professional invoices instantly. 100% free - no signup required.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #0a0a0f; color: #e4e4e7; min-height: 100vh; padding: 2rem; }
+    .container { max-width: 900px; margin: 0 auto; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .logo { font-size: 1.5rem; font-weight: 700; }
+    .logo span { color: #6366f1; }
+    .badge { background: #22c55e; color: #fff; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; }
+    .main { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .form-section { background: #12121a; border: 1px solid #2a2a3a; border-radius: 12px; padding: 2rem; }
+    .preview-section { background: #fff; border-radius: 12px; padding: 2rem; color: #1a1a25; }
+    h2 { margin-bottom: 1.5rem; font-size: 1.25rem; }
+    .form-group { margin-bottom: 1rem; }
+    label { display: block; margin-bottom: 0.5rem; font-size: 0.875rem; color: #a1a1aa; }
+    input, select, textarea { width: 100%; padding: 0.75rem; border: 1px solid #2a2a3a; border-radius: 6px; background: #1a1a25; color: #e4e4e7; font-size: 1rem; }
+    input:focus, textarea:focus { outline: none; border-color: #6366f1; }
+    .btn { display: inline-block; padding: 1rem 2rem; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; width: 100%; margin-top: 1rem; }
+    .btn-primary { background: #6366f1; color: #fff; }
+    .btn-primary:hover { background: #818cf8; }
+    .btn-secondary { background: #22c55e; color: #fff; }
+    .invoice { font-size: 0.9rem; line-height: 1.6; }
+    .invoice-header { display: flex; justify-content: space-between; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 2px solid #e5e5e5; }
+    .invoice-title { font-size: 1.5rem; font-weight: 700; color: #1a1a25; }
+    .invoice-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    .invoice-table th, .invoice-table td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #e5e5e5; }
+    .invoice-table th { background: #f5f5f5; font-weight: 600; }
+    .invoice-total { text-align: right; font-size: 1.25rem; font-weight: 700; margin-top: 1rem; }
+    .lead-capture { background: #1a1a25; border: 1px solid #6366f1; border-radius: 8px; padding: 1rem; margin-top: 1rem; text-align: center; }
+    .lead-capture p { font-size: 0.9rem; margin-bottom: 0.75rem; }
+    .lead-capture input { width: 70%; margin-right: 0.5rem; }
+    .lead-capture .btn { width: 25%; padding: 0.75rem; margin-top: 0; }
+    @media (max-width: 768px) { .main { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">Money<span>X</span> Invoice Generator</div>
+      <span class="badge">FREE</span>
+    </header>
+
+    <div class="main">
+      <div class="form-section">
+        <h2>Invoice Details</h2>
+        <div class="form-group">
+          <label>Your Business Name</label>
+          <input type="text" id="businessName" placeholder="Your Company Name" oninput="updateInvoice()">
+        </div>
+        <div class="form-group">
+          <label>Client Name</label>
+          <input type="text" id="clientName" placeholder="Client Name" oninput="updateInvoice()">
+        </div>
+        <div class="form-group">
+          <label>Client Email</label>
+          <input type="email" id="clientEmail" placeholder="client@email.com" oninput="updateInvoice()">
+        </div>
+        <div class="form-group">
+          <label>Invoice Number</label>
+          <input type="text" id="invoiceNumber" value="INV-001" oninput="updateInvoice()">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" id="itemDesc" placeholder="Service or Product" value="Professional Services" oninput="updateInvoice()">
+        </div>
+        <div class="form-group">
+          <label>Amount ($)</label>
+          <input type="number" id="amount" value="500" oninput="updateInvoice()">
+        </div>
+        <button class="btn btn-primary" onclick="downloadInvoice()">Download Invoice</button>
+        
+        <div class="lead-capture">
+          <p>📧 Get invoice templates & tips sent to your inbox</p>
+          <input type="email" id="leadEmail" placeholder="your@email.com">
+          <button class="btn btn-secondary" onclick="captureLead()">Join</button>
+        </div>
+      </div>
+
+      <div class="preview-section">
+        <div class="invoice" id="invoicePreview">
+          <div class="invoice-header">
+            <div>
+              <div class="invoice-title">INVOICE</div>
+              <div id="previewBusiness">Your Business Name</div>
+            </div>
+            <div style="text-align: right;">
+              <div id="previewInvoiceNum">INV-001</div>
+              <div id="previewDate">February 25, 2026</div>
+            </div>
+          </div>
+          <div style="margin-bottom: 2rem;">
+            <strong>Bill To:</strong><br>
+            <span id="previewClient">Client Name</span><br>
+            <span id="previewClientEmail">client@email.com</span>
+          </div>
+          <table class="invoice-table">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td id="previewDesc">Professional Services</td>
+                <td id="previewAmount">$500.00</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="invoice-total">
+            Total: $<span id="previewTotal">500.00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function updateInvoice() {
+      document.getElementById('previewBusiness').textContent = document.getElementById('businessName').value || 'Your Business Name';
+      document.getElementById('previewClient').textContent = document.getElementById('clientName').value || 'Client Name';
+      document.getElementById('previewClientEmail').textContent = document.getElementById('clientEmail').value || 'client@email.com';
+      document.getElementById('previewInvoiceNum').textContent = document.getElementById('invoiceNumber').value || 'INV-001';
+      document.getElementById('previewDesc').textContent = document.getElementById('itemDesc').value || 'Professional Services';
+      const amount = parseFloat(document.getElementById('amount').value) || 0;
+      document.getElementById('previewAmount').textContent = '$' + amount.toFixed(2);
+      document.getElementById('previewTotal').textContent = amount.toFixed(2);
+    }
+    
+    function downloadInvoice() {
+      alert('Invoice ready! In production, this downloads as PDF.\n\nUse the form to capture leads and grow your email list.');
+    }
+    
+    function captureLead() {
+      const email = document.getElementById('leadEmail').value;
+      if (email) {
+        fetch('/api/waitlist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        }).then(() => {
+          alert('Thanks! You\'re on the list. We\'ll send invoice tips to ' + email);
+        });
+      }
+    }
+    
+    document.getElementById('previewDate').textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  </script>
+</body>
+</html>

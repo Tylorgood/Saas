@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tip Calculator - Know What to Tip</title>
+  <meta name="description" content="Calculate tips instantly. Know what to tip anywhere in the world.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #0a0a0f; color: #e4e4e7; min-height: 100vh; padding: 2rem; }
+    .container { max-width: 500px; margin: 0 auto; text-align: center; }
+    header { margin-bottom: 2rem; }
+    .logo { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .logo span { color: #6366f1; }
+    h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+    .subtitle { color: #a1a1aa; }
+    .calculator { background: #12121a; border: 1px solid #2a2a3a; border-radius: 16px; padding: 2rem; }
+    .form-group { margin-bottom: 1.5rem; text-align: left; }
+    label { display: block; margin-bottom: 0.5rem; color: #a1a1aa; }
+    input { width: 100%; padding: 1rem; border: 1px solid #2a2a3a; border-radius: 8px; background: #1a1a25; color: #e4e4e7; font-size: 1.5rem; text-align: center; }
+    input:focus { outline: none; border-color: #6366f1; }
+    .presets { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .preset { flex: 1; padding: 0.75rem; background: #1a1a25; border: 1px solid #2a2a3a; border-radius: 8px; color: #e4e4e7; cursor: pointer; transition: all 0.2s; }
+    .preset:hover, .preset.active { background: #6366f1; border-color: #6366f1; }
+    .result { background: #1a1a25; border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; }
+    .result-row { display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #2a2a3a; }
+    .result-row:last-child { border-bottom: none; font-weight: 700; font-size: 1.25rem; }
+    .result-row span:last-child { color: #22c55e; }
+    .share { margin-top: 2rem; }
+    .share-btn { display: inline-block; padding: 0.75rem 1.5rem; background: #1a1a25; border: 1px solid #2a2a3a; border-radius: 8px; color: #e4e4e7; text-decoration: none; margin: 0.25rem; cursor: pointer; }
+    .share-btn:hover { border-color: #6366f1; }
+    .viral { background: linear-gradient(135deg, #6366f1 0%, #22c55e 100%); border-radius: 12px; padding: 1.5rem; margin-top: 2rem; }
+    .viral h3 { margin-bottom: 0.5rem; }
+    .viral p { font-size: 0.9rem; opacity: 0.9; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">Money<span>X</span></div>
+      <h1>Tip Calculator</h1>
+      <p class="subtitle">Know what to tip. No awkward moments.</p>
+    </header>
+
+    <div class="calculator">
+      <div class="form-group">
+        <label>Bill Amount</label>
+        <input type="number" id="bill" placeholder="0.00" oninput="calculate()">
+      </div>
+      
+      <label style="margin-bottom: 0.5rem;">Tip Percentage</label>
+      <div class="presets">
+        <button class="preset active" onclick="setTip(15)">15%</button>
+        <button class="preset" onclick="setTip(18)">18%</button>
+        <button class="preset" onclick="setTip(20)">20%</button>
+        <button class="preset" onclick="setTip(25)">25%</button>
+      </div>
+      
+      <div class="form-group">
+        <label>Custom Tip %</label>
+        <input type="number" id="tipPercent" value="20" oninput="calculate()">
+      </div>
+
+      <div class="result">
+        <div class="result-row">
+          <span>Tip Amount</span>
+          <span id="tipAmount">$0.00</span>
+        </div>
+        <div class="result-row">
+          <span>Split Between</span>
+          <span style="display: flex; align-items: center; gap: 0.5rem;">
+            <button onclick="adjustSplit(-1)" style="width: 30px; height: 30px; background: #2a2a3a; border: none; border-radius: 6px; color: #fff; cursor: pointer;">-</button>
+            <span id="splitCount" style="min-width: 20px;">1</span>
+            <button onclick="adjustSplit(1)" style="width: 30px; height: 30px; background: #2a2a3a; border: none; border-radius: 6px; color: #fff; cursor: pointer;">+</button>
+          </span>
+        </div>
+        <div class="result-row">
+          <span>Total Per Person</span>
+          <span id="totalPerPerson">$0.00</span>
+        </div>
+        <div class="result-row">
+          <span>Grand Total</span>
+          <span id="grandTotal">$0.00</span>
+        </div>
+      </div>
+
+      <div class="share">
+        <p style="color: #a1a1aa; margin-bottom: 0.5rem;">Share with friends</p>
+        <button class="share-btn" onclick="shareTwitter()">𝕏 Twitter</button>
+        <button class="share-btn" onclick="shareWhatsApp()">📱 WhatsApp</button>
+      </div>
+    </div>
+
+    <div class="viral">
+      <h3>💰 Want to earn more tips?</h3>
+      <p>Use CashFlow AI to track all your tip income and expenses.</p>
+    </div>
+  </div>
+
+  <script>
+    let split = 1;
+    
+    function setTip(percent) {
+      document.getElementById('tipPercent').value = percent;
+      document.querySelectorAll('.preset').forEach(p => p.classList.remove('active'));
+      event.target.classList.add('active');
+      calculate();
+    }
+    
+    function adjustSplit(delta) {
+      split = Math.max(1, split + delta);
+      document.getElementById('splitCount').textContent = split;
+      calculate();
+    }
+    
+    function calculate() {
+      const bill = parseFloat(document.getElementById('bill').value) || 0;
+      const tipPercent = parseFloat(document.getElementById('tipPercent').value) || 0;
+      
+      const tip = bill * (tipPercent / 100);
+      const total = bill + tip;
+      const perPerson = total / split;
+      
+      document.getElementById('tipAmount').textContent = '$' + tip.toFixed(2);
+      document.getElementById('totalPerPerson').textContent = '$' + perPerson.toFixed(2);
+      document.getElementById('grandTotal').textContent = '$' + total.toFixed(2);
+    }
+    
+    function shareTwitter() {
+      const bill = document.getElementById('bill').value || '0';
+      const tip = document.getElementById('tipAmount').textContent;
+      window.open(`https://twitter.com/intent/tweet?text=I just calculated a ${tip} tip on a $${bill} bill using MoneyX Tip Calculator! 💰`, '_blank');
+    }
+    
+    function shareWhatsApp() {
+      const bill = document.getElementById('bill').value || '0';
+      const total = document.getElementById('grandTotal').textContent;
+      window.open(`https://wa.me/?text=Check out this tip calculator: $${total} total on $${bill} bill! 💰`, '_blank');
+    }
+  </script>
+</body>
+</html>

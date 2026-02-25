@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Profit Calculator - Know Your Numbers</title>
+  <meta name="description" content="Calculate your profit margins instantly. Free tool for freelancers and small business.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #0a0a0f; color: #e4e4e7; min-height: 100vh; padding: 2rem; }
+    .container { max-width: 800px; margin: 0 auto; }
+    header { text-align: center; margin-bottom: 3rem; }
+    .logo { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; }
+    .logo span { color: #6366f1; }
+    .badge { background: #22c55e; color: #fff; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; }
+    h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+    .subtitle { color: #a1a1aa; font-size: 1.1rem; margin-bottom: 2rem; }
+    .calculator { background: #12121a; border: 1px solid #2a2a3a; border-radius: 16px; padding: 2rem; }
+    .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+    .form-group { margin-bottom: 1rem; }
+    label { display: block; margin-bottom: 0.5rem; font-size: 0.875rem; color: #a1a1aa; }
+    input { width: 100%; padding: 1rem; border: 1px solid #2a2a3a; border-radius: 8px; background: #1a1a25; color: #e4e4e7; font-size: 1.25rem; }
+    input:focus { outline: none; border-color: #6366f1; }
+    .results { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2rem; }
+    .result-card { background: #1a1a25; border-radius: 12px; padding: 1.5rem; text-align: center; }
+    .result-card.highlight { border: 2px solid #22c55e; background: rgba(34, 197, 94, 0.1); }
+    .result-label { font-size: 0.875rem; color: #a1a1aa; margin-bottom: 0.5rem; }
+    .result-value { font-size: 2rem; font-weight: 700; }
+    .result-value.positive { color: #22c55e; }
+    .result-value.negative { color: #f85149; }
+    .cta { background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%); border-radius: 12px; padding: 2rem; text-align: center; margin-top: 2rem; }
+    .cta h3 { margin-bottom: 0.5rem; }
+    .cta p { color: rgba(255,255,255,0.8); margin-bottom: 1rem; }
+    .btn { display: inline-block; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; text-decoration: none; border: none; cursor: pointer; }
+    .btn-white { background: #fff; color: #6366f1; }
+    @media (max-width: 600px) { .input-grid, .results { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">Money<span>X</span></div>
+      <span class="badge">FREE TOOL</span>
+      <h1>Profit Calculator</h1>
+      <p class="subtitle">Know your numbers. Grow your business.</p>
+    </header>
+
+    <div class="calculator">
+      <div class="input-grid">
+        <div class="form-group">
+          <label>Revenue (Total Income)</label>
+          <input type="number" id="revenue" placeholder="10000" oninput="calculate()">
+        </div>
+        <div class="form-group">
+          <label>Cost of Goods Sold</label>
+          <input type="number" id="cogs" placeholder="4000" oninput="calculate()">
+        </div>
+        <div class="form-group">
+          <label>Operating Expenses</label>
+          <input type="number" id="expenses" placeholder="3000" oninput="calculate()">
+        </div>
+        <div class="form-group">
+          <label>Hours Worked This Month</label>
+          <input type="number" id="hours" placeholder="160" oninput="calculate()">
+        </div>
+      </div>
+
+      <div class="results">
+        <div class="result-card">
+          <div class="result-label">Gross Profit</div>
+          <div class="result-value" id="grossProfit">$0</div>
+        </div>
+        <div class="result-card">
+          <div class="result-label">Net Profit</div>
+          <div class="result-value" id="netProfit">$0</div>
+        </div>
+        <div class="result-card highlight">
+          <div class="result-label">Your Hourly Rate</div>
+          <div class="result-value" id="hourlyRate">$0</div>
+        </div>
+      </div>
+
+      <div class="result-card" style="margin-top: 1rem; text-align: left;">
+        <div class="result-label">Profit Margin</div>
+        <div class="result-value" id="profitMargin">0%</div>
+      </div>
+    </div>
+
+    <div class="cta">
+      <h3>Want to track these numbers automatically?</h3>
+      <p>Use CashFlow AI to track revenue, expenses, and profits every month.</p>
+      <a href="/app" class="btn btn-white">Start Free</a>
+    </div>
+  </div>
+
+  <script>
+    function calculate() {
+      const revenue = parseFloat(document.getElementById('revenue').value) || 0;
+      const cogs = parseFloat(document.getElementById('cogs').value) || 0;
+      const expenses = parseFloat(document.getElementById('expenses').value) || 0;
+      const hours = parseFloat(document.getElementById('hours').value) || 1;
+
+      const grossProfit = revenue - cogs;
+      const netProfit = grossProfit - expenses;
+      const margin = revenue > 0 ? (netProfit / revenue * 100) : 0;
+      const hourly = hours > 0 ? netProfit / hours : 0;
+
+      document.getElementById('grossProfit').textContent = '$' + grossProfit.toLocaleString();
+      document.getElementById('grossProfit').className = 'result-value ' + (grossProfit >= 0 ? 'positive' : 'negative');
+      
+      document.getElementById('netProfit').textContent = '$' + netProfit.toLocaleString();
+      document.getElementById('netProfit').className = 'result-value ' + (netProfit >= 0 ? 'positive' : 'negative');
+      
+      document.getElementById('hourlyRate').textContent = '$' + hourly.toFixed(2);
+      document.getElementById('hourlyRate').className = 'result-value ' + (hourly >= 0 ? 'positive' : 'negative');
+      
+      document.getElementById('profitMargin').textContent = margin.toFixed(1) + '%';
+      document.getElementById('profitMargin').className = 'result-value ' + (margin >= 0 ? 'positive' : 'negative');
+    }
+  </script>
+</body>
+</html>

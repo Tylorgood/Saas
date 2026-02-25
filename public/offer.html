@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Offer Creator - Design Irresistible Offers</title>
+  <meta name="description" content="Create high-converting offers in minutes. Free tool for entrepreneurs.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #0a0a0f; color: #e4e4e7; min-height: 100vh; padding: 2rem; }
+    .container { max-width: 900px; margin: 0 auto; }
+    header { text-align: center; margin-bottom: 2rem; }
+    .logo { font-size: 1.5rem; font-weight: 700; }
+    .logo span { color: #6366f1; }
+    h1 { font-size: 2rem; margin: 1rem 0; }
+    .subtitle { color: #a1a1aa; margin-bottom: 2rem; }
+    .main { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .form-section { background: #12121a; border: 1px solid #2a2a3a; border-radius: 12px; padding: 2rem; }
+    .preview-section { background: #fff; border-radius: 12px; padding: 2rem; color: #1a1a25; position: relative; }
+    .form-group { margin-bottom: 1rem; }
+    label { display: block; margin-bottom: 0.5rem; font-size: 0.875rem; color: #a1a1aa; }
+    input, textarea, select { width: 100%; padding: 0.75rem; border: 1px solid #2a2a3a; border-radius: 6px; background: #1a1a25; color: #e4e4e7; font-size: 1rem; }
+    input:focus, textarea:focus { outline: none; border-color: #6366f1; }
+    textarea { height: 80px; resize: vertical; }
+    .offer-card { border: 3px solid #6366f1; border-radius: 16px; padding: 1.5rem; }
+    .offer-badge { display: inline-block; background: #6366f1; color: #fff; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; margin-bottom: 1rem; }
+    .offer-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .offer-desc { color: #666; margin-bottom: 1rem; line-height: 1.5; }
+    .offer-price { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 1rem; }
+    .price-original { text-decoration: line-through; color: #999; font-size: 1rem; }
+    .price-current { font-size: 2rem; font-weight: 700; color: #22c55e; }
+    .offer-features { list-style: none; margin-bottom: 1.5rem; }
+    .offer-features li { padding: 0.5rem 0; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 0.5rem; }
+    .offer-features li::before { content: "✓"; color: #22c55e; font-weight: bold; }
+    .offer-cta { display: block; width: 100%; padding: 1rem; background: #6366f1; color: #fff; text-align: center; border-radius: 8px; text-decoration: none; font-weight: 600; }
+    .offer-cta:hover { background: #818cf8; }
+    .urgency { background: #fef3c7; color: #92400e; padding: 0.5rem; border-radius: 6px; text-align: center; font-size: 0.875rem; margin-bottom: 1rem; }
+    .guarantee { text-align: center; font-size: 0.875rem; color: #666; margin-top: 1rem; }
+    @media (max-width: 768px) { .main { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">Money<span>X</span> Offer Creator</div>
+      <h1>Create Irresistible Offers</h1>
+      <p class="subtitle">Design high-converting offers in seconds. Free tool.</p>
+    </header>
+
+    <div class="main">
+      <div class="form-section">
+        <h2>Your Offer</h2>
+        <div class="form-group">
+          <label>Product/Service Name</label>
+          <input type="text" id="offerName" placeholder="Premium Consulting" oninput="updateOffer()">
+        </div>
+        <div class="form-group">
+          <label>Description ( What's included?)</label>
+          <textarea id="offerDesc" placeholder="1-hour strategy session + action plan + 30-day email support" oninput="updateOffer()"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Regular Price ($)</label>
+          <input type="number" id="regularPrice" placeholder="500" oninput="updateOffer()">
+        </div>
+        <div class="form-group">
+          <label>Offer Price ($)</label>
+          <input type="number" id="offerPrice" placeholder="197" oninput="updateOffer()">
+        </div>
+        <div class="form-group">
+          <label>Bonus Items (comma separated)</label>
+          <textarea id="bonuses" placeholder="Free workbook, 30-min bonus call, Email templates" oninput="updateOffer()"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Urgency Text</label>
+          <input type="text" id="urgency" placeholder="Offer expires in 24 hours!" value="⚡ Limited time offer" oninput="updateOffer()">
+        </div>
+        <div class="form-group">
+          <label>Guarantee</label>
+          <input type="text" id="guarantee" placeholder="100% money-back guarantee" value="100% Satisfaction Guarantee" oninput="updateOffer()">
+        </div>
+      </div>
+
+      <div class="preview-section">
+        <div class="offer-card" id="offerCard">
+          <div class="offer-badge" id="previewBadge">SPECIAL OFFER</div>
+          <div class="urgency" id="previewUrgency">⚡ Limited time offer</div>
+          <div class="offer-title" id="previewName">Your Offer Name</div>
+          <div class="offer-desc" id="previewDesc">Your offer description will appear here...</div>
+          <div class="offer-price">
+            <span class="price-original" id="previewRegular">$500</span>
+            <span class="price-current" id="previewCurrent">$197</span>
+          </div>
+          <ul class="offer-features" id="previewFeatures">
+            <li>Feature 1</li>
+            <li>Feature 2</li>
+          </ul>
+          <a href="#" class="offer-cta" id="previewCTA">Get This Offer Now</a>
+          <div class="guarantee" id="previewGuarantee">100% Satisfaction Guarantee</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function updateOffer() {
+      document.getElementById('previewName').textContent = document.getElementById('offerName').value || 'Your Offer Name';
+      document.getElementById('previewDesc').textContent = document.getElementById('offerDesc').value || 'Your offer description will appear here...';
+      
+      const regular = parseFloat(document.getElementById('regularPrice').value) || 0;
+      const offer = parseFloat(document.getElementById('offerPrice').value) || 0;
+      
+      document.getElementById('previewRegular').textContent = regular > 0 ? '$' + regular : '';
+      document.getElementById('previewCurrent').textContent = '$' + offer;
+      
+      const bonuses = document.getElementById('bonuses').value.split(',').filter(b => b.trim());
+      const features = bonuses.length > 0 ? bonuses : ['Your bonus items'];
+      document.getElementById('previewFeatures').innerHTML = features.map(f => `<li>${f.trim()}</li>`).join('');
+      
+      document.getElementById('previewUrgency').textContent = document.getElementById('urgency').value;
+      document.getElementById('previewGuarantee').textContent = document.getElementById('guarantee').value;
+    }
+  </script>
+</body>
+</html>

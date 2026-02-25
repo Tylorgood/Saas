@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Invoice Generator - Create Professional Invoices Instantly</title>
+  <meta name="description" content="Generate professional invoices in seconds. 100% free - no signup required.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0f; color: #e4e4e7; min-height: 100vh; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; margin-bottom: 2rem; }
+    .logo { font-size: 1.5rem; font-weight: 700; }
+    .logo span { color: #6366f1; }
+    .badge { background: #22c55e; color: #fff; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+    .hero { text-align: center; padding: 3rem 0; }
+    .hero h1 { font-size: 3rem; margin-bottom: 1rem; line-height: 1.2; }
+    .hero h1 span { color: #6366f1; }
+    .hero p { font-size: 1.25rem; color: #a1a1aa; max-width: 600px; margin: 0 auto 2rem; }
+    .btn { display: inline-block; padding: 1rem 2rem; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; text-decoration: none; }
+    .btn-primary { background: #6366f1; color: #fff; }
+    .btn-primary:hover { background: #818cf8; transform: translateY(-2px); }
+    .tools-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+    .tool-card { background: #12121a; border: 1px solid #2a2a3a; border-radius: 12px; padding: 2rem; text-align: center; transition: all 0.3s; }
+    .tool-card:hover { border-color: #6366f1; transform: translateY(-5px); }
+    .tool-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .tool-card h3 { margin-bottom: 0.5rem; }
+    .tool-card p { color: #a1a1aa; font-size: 0.9rem; margin-bottom: 1rem; }
+    .tool-card .btn { padding: 0.75rem 1.5rem; font-size: 0.9rem; }
+    .cta-section { background: linear-gradient(135deg, #12121a 0%, #1a1a25 100%); border-radius: 16px; padding: 4rem; text-align: center; margin-top: 4rem; border: 1px solid #2a2a3a; }
+    .cta-section h2 { font-size: 2.5rem; margin-bottom: 1rem; }
+    .cta-section p { color: #a1a1aa; margin-bottom: 2rem; font-size: 1.1rem; }
+    .trust { display: flex; justify-content: center; gap: 2rem; margin-top: 2rem; color: #a1a1aa; font-size: 0.9rem; }
+    footer { text-align: center; padding: 3rem 0; color: #a1a1aa; border-top: 1px solid #2a2a3a; margin-top: 4rem; }
+    @media (max-width: 768px) { .tools-grid { grid-template-columns: 1fr; } .hero h1 { font-size: 2rem; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">Money<span>X</span></div>
+      <span class="badge">100% FREE</span>
+    </header>
+
+    <section class="hero">
+      <h1>Free Financial Tools<br><span>No Signup Required</span></h1>
+      <p>Professional-grade invoicing, calculators, and generators. All free. All instant.</p>
+      <a href="#tools" class="btn btn-primary">Start Using Free Tools</a>
+      <div class="trust">
+        <span>✓ No Credit Card</span>
+        <span>✓ No Account Needed</span>
+        <span>✓ Instant Results</span>
+      </div>
+    </section>
+
+    <div class="tools-grid" id="tools">
+      <div class="tool-card">
+        <div class="tool-icon">📄</div>
+        <h3>Invoice Generator</h3>
+        <p>Create professional invoices in seconds. Download as PDF.</p>
+        <a href="/invoice-generator" class="btn btn-primary">Use Free Tool</a>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">💰</div>
+        <h3>Profit Calculator</h3>
+        <p>Calculate profit margins, revenue, and business metrics.</p>
+        <a href="/calculator" class="btn btn-primary">Use Free Tool</a>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">📊</div>
+        <h3>Proposal Template</h3>
+        <p>Generate professional proposals in minutes.</p>
+        <a href="/proposal" class="btn btn-primary">Use Free Tool</a>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">💳</div>
+        <h3>Payment Link</h3>
+        <p>Generate secure payment links for clients.</p>
+        <a href="/payment" class="btn btn-primary">Create Link</a>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">📝</div>
+        <h3>Quote Generator</h3>
+        <p>Create instant quotes for potential clients.</p>
+        <a href="/quote" class="btn btn-primary">Use Free Tool</a>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon">🔗</div>
+        <h3>Link in Bio</h3>
+        <p>All your payment links in one place.</p>
+        <a href="/linktree" class="btn btn-primary">Create Page</a>
+div class="tool-card">
+        <div class="tool-icon">🎁</div>
+        <h3>Offer Creator</h3>
+        <p>Design Irresistible Offers That Convert</p>
+        <a href="/offer" class="btn btn-primary">Use Free Tool</a>
+      </div>
+    </div>
+
+    <section class="cta-section">
+      <h2>Need More? Upgrade to Pro</h2>
+      <p>Get unlimited invoices, client management, automated reminders, and more.</p>
+      <a href="/upgrade" class="btn btn-primary" style="padding: 1rem 3rem; font-size: 1.1rem;">Start Free Trial</a>
+    </section>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 MoneyX Tools. All rights reserved.</p>
+  </footer>
+</body>
+</html>

@@ -231,6 +231,7 @@ async function getPaymentLink(id, number, amount) {
     });
     
     const data = await res.json();
+    console.log('Payment response:', data);
     
     if (data.url) {
       await navigator.clipboard.writeText(data.url);
@@ -239,7 +240,8 @@ async function getPaymentLink(id, number, amount) {
       alert('Error: ' + (data.error || 'Failed to create payment link'));
     }
   } catch(err) {
-    alert('Error creating payment link');
+    console.error('Payment error:', err);
+    alert('Error creating payment link: ' + err.message);
   }
 }
 

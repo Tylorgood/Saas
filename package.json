@@ -10,9 +10,10 @@
     "billing": "node scripts/billing-automation.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
     "bcryptjs": "^2.4.3",
+    "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
+    "stripe": "^20.3.1",
     "uuid": "^9.0.0"
   },
   "engines": {

@@ -199,7 +199,7 @@ async function loadInvoices() {
   
   const tbody = document.getElementById('invoicesTable');
   if (data.invoices.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No invoices yet</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No invoices yet</td></tr>';
   } else {
     tbody.innerHTML = data.invoices.map(inv => `
       <tr>
@@ -209,10 +209,37 @@ async function loadInvoices() {
         <td>${formatDate(inv.due_date)}</td>
         <td><span class="status-badge ${inv.status}">${inv.status}</span></td>
         <td>
-          ${inv.status === 'pending' ? `<button class="btn-small" onclick="markPaid('${inv.id}')">Mark Paid</button>` : ''}
+          ${inv.status === 'pending' ? `
+            <button class="btn-small" onclick="getPaymentLink('${inv.id}', '${inv.invoice_number}', ${inv.amount})">Get Pay Link</button>
+            <button class="btn-small" onclick="markPaid('${inv.id}')">Mark Paid</button>
+          ` : ''}
         </td>
       </tr>
     `).join('');
+  }
+}
+
+async function getPaymentLink(id, number, amount) {
+  try {
+    const res = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ invoiceId: id })
+    });
+    
+    const data = await res.json();
+    
+    if (data.url) {
+      await navigator.clipboard.writeText(data.url);
+      alert('Payment link copied to clipboard!\n\n' + data.url);
+    } else {
+      alert('Error: ' + (data.error || 'Failed to create payment link'));
+    }
+  } catch(err) {
+    alert('Error creating payment link');
   }
 }
 

@@ -23,14 +23,26 @@
     .success { text-align: center; }
     .success-icon { font-size: 4rem; margin-bottom: 1rem; }
     .success h2 { color: #22c55e; margin-bottom: 0.5rem; }
+    .error { text-align: center; color: #f85149; }
+    .error h2 { color: #f85149; margin-bottom: 0.5rem; }
     .hidden { display: none; }
+    .loading { text-align: center; padding: 2rem; }
+    .spinner { border: 3px solid #2a2a3a; border-top: 3px solid #6366f1; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 1rem; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
   <div class="card">
     <div class="logo">CashFlow <span>AI</span></div>
     
-    <div id="invoiceView">
+    <div id="loadingView">
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Loading invoice...</p>
+      </div>
+    </div>
+    
+    <div id="invoiceView" class="hidden">
       <h1>Invoice Payment</h1>
       <div class="invoice-info">
         <div class="row">
@@ -50,36 +62,75 @@
           <span class="amount" id="amount">$0.00</span>
         </div>
       </div>
-      <button class="btn btn-primary" onclick="simulatePayment()">Pay Now</button>
-      <button class="btn btn-secondary" onclick="window.close()">Close</button>
+      <button class="btn btn-primary" onclick="payWithStripe()">Pay with Card</button>
     </div>
     
     <div id="successView" class="success hidden">
       <div class="success-icon">✓</div>
       <h2>Payment Successful!</h2>
       <p style="color: #a1a1aa; margin-top: 0.5rem;">Thank you for your payment.</p>
+      <p style="color: #a1a1aa; font-size: 0.875rem; margin-top: 1rem;">Redirecting to app...</p>
+    </div>
+    
+    <div id="canceledView" class="error hidden">
+      <h2>Payment Canceled</h2>
+      <p style="color: #a1a1aa; margin-top: 0.5rem;">You can try again anytime.</p>
+      <button class="btn btn-secondary" onclick="location.reload()">Try Again</button>
     </div>
   </div>
 
   <script>
     const params = new URLSearchParams(window.location.search);
-    const data = params.get('d');
+    let invoiceId = params.get('id') || params.get('d');
+    let invoiceData = null;
     
-    if (data) {
-      try {
-        const decoded = JSON.parse(atob(data));
-        document.getElementById('invoiceNumber').textContent = decoded.inv || 'INV-0001';
-        document.getElementById('fromName').textContent = decoded.from || 'Business';
-        document.getElementById('dueDate').textContent = decoded.due || 'N/A';
-        document.getElementById('amount').textContent = '$' + parseFloat(decoded.amt || 0).toFixed(2);
-      } catch(e) {
-        console.log('Invalid data');
+    if (params.get('success') === 'true') {
+      document.getElementById('loadingView').classList.add('hidden');
+      document.getElementById('successView').classList.remove('hidden');
+      if (invoiceId) {
+        fetch(`/api/invoice/${invoiceId}/mark-paid`, { method: 'POST' }).then(() => {
+          setTimeout(() => window.location.href = '/app', 3000);
+        });
       }
+    } else if (params.get('canceled') === 'true') {
+      document.getElementById('loadingView').classList.add('hidden');
+      document.getElementById('canceledView').classList.remove('hidden');
+    } else if (invoiceId) {
+      try {
+        invoiceData = JSON.parse(atob(invoiceId));
+        document.getElementById('invoiceNumber').textContent = invoiceData.inv || 'INV-0001';
+        document.getElementById('fromName').textContent = invoiceData.from || 'Business';
+        document.getElementById('dueDate').textContent = invoiceData.due || 'N/A';
+        document.getElementById('amount').textContent = '$' + parseFloat(invoiceData.amt || 0).toFixed(2);
+        document.getElementById('loadingView').classList.add('hidden');
+        document.getElementById('invoiceView').classList.remove('hidden');
+      } catch(e) {
+        document.getElementById('loadingView').classList.add('hidden');
+        document.getElementById('invoiceView').classList.remove('hidden');
+      }
+    } else {
+      document.getElementById('loadingView').classList.add('hidden');
+      document.getElementById('invoiceView').classList.remove('hidden');
     }
     
-    function simulatePayment() {
-      document.getElementById('invoiceView').classList.add('hidden');
-      document.getElementById('successView').classList.remove('hidden');
+    async function payWithStripe() {
+      try {
+        const res = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ invoiceId: invoiceData?.id })
+        });
+        
+        const data = await res.json();
+        
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          alert(data.error || 'Payment failed');
+        }
+      } catch(err) {
+        alert('Payment error');
+      }
     }
   </script>
 </body>

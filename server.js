@@ -5,6 +5,9 @@ const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const db = require('./database');
 
+const Stripe = require('stripe');
+const stripe = Stripe('pk_test_51T4aMU0mkOiOdoBNUnE3j8qQE64Y3rz2oez6glzVj2hLVjOOEcXvfQk8ogkPRNprEmCie78EZCASNKHQnwLYUuhr00sYvw30Vw');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'cashflow-ai-secret-key-change-in-production';
@@ -264,6 +267,78 @@ app.get('/app', (req, res) => {
 
 app.get('/pay', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'pay.html'));
+});
+
+app.post('/api/create-checkout-session', async (req, res) => {
+  try {
+    const { invoiceId } = req.body;
+    
+    let invoice;
+    if (invoiceId) {
+      invoice = db.invoices.find(i => i.id === invoiceId);
+    }
+    
+    if (!invoice) {
+      return res.status(404).json({ error: 'Invoice not found' });
+    }
+    
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [{
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: `Invoice ${invoice.invoice_number}`,
+            description: `Payment for ${invoice.invoice_number}`
+          },
+          unit_amount: Math.round(invoice.amount * 100)
+        },
+        quantity: 1
+      }],
+      mode: 'payment',
+      success_url: `${req.protocol}://${req.get('host')}/pay?success=true&id=${invoice.id}`,
+      cancel_url: `${req.protocol}://${req.get('host')}/pay?canceled=true&id=${invoice.id}`,
+      metadata: {
+        invoice_id: invoice.id,
+        invoice_number: invoice.invoice_number
+      }
+    });
+    
+    res.json({ url: session.url });
+  } catch (error) {
+    console.error('Stripe error:', error);
+    res.status(500).json({ error: 'Payment failed' });
+  }
+});
+
+app.post('/api/webhook/stripe', express.raw({ type: 'application/json' }), (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  let event;
+  
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, 'whsec_test_webhook_secret');
+  } catch (err) {
+    console.error('Webhook signature verification failed:', err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+  
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
+    const invoiceId = session.metadata?.invoice_id;
+    
+    if (invoiceId) {
+      db.updateInvoiceStatus(invoiceId, 'paid');
+      console.log(`Invoice ${invoiceId} marked as paid!`);
+    }
+  }
+  
+  res.json({ received: true });
+});
+
+app.post('/api/invoice/:id/mark-paid', (req, res) => {
+  const { id } = req.params;
+  db.updateInvoiceStatus(id, 'paid');
+  res.json({ success: true });
 });
 
 app.get('*', (req, res) => {

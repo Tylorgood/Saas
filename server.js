@@ -358,6 +358,13 @@ app.post('/api/invoice/:id/mark-paid', (req, res) => {
   res.json({ success: true });
 });
 
+app.get('/api/status', (req, res) => {
+  res.json({ 
+    stripe: !!stripe,
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.get('*', (req, res) => {
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ error: 'API endpoint not found' });

@@ -361,6 +361,8 @@ app.post('/api/invoice/:id/mark-paid', (req, res) => {
 app.get('/api/status', (req, res) => {
   res.json({ 
     stripe: !!stripe,
+    stripeKey: stripeSecret ? 'configured' : 'missing',
+    envKeys: Object.keys(process.env).filter(k => k.includes('STRIPE')),
     timestamp: new Date().toISOString()
   });
 });

@@ -3,122 +3,84 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pay Invoice - CashFlow AI</title>
+  <title>Pay Now - Instant Secure Payment</title>
+  <meta name="robots" content="noindex">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #0a0a0f; color: #e4e4e7; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
-    .card { background: #12121a; border: 1px solid #2a2a3a; border-radius: 16px; padding: 2.5rem; max-width: 450px; width: 100%; }
-    .logo { font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem; }
-    .logo span { color: #6366f1; }
-    h1 { font-size: 1.5rem; margin-bottom: 1rem; }
-    .invoice-info { background: #1a1a25; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0; }
-    .row { display: flex; justify-content: space-between; margin-bottom: 0.75rem; }
-    .row:last-child { margin-bottom: 0; font-weight: 600; font-size: 1.25rem; }
-    .label { color: #a1a1aa; }
-    .amount { color: #22c55e; }
-    .btn { display: block; width: 100%; padding: 1rem; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
-    .btn-primary { background: #6366f1; color: #fff; }
-    .btn-primary:hover { background: #818cf8; }
-    .btn-secondary { background: transparent; border: 1px solid #2a2a3a; color: #e4e4e7; margin-top: 1rem; }
-    .success { text-align: center; }
-    .success-icon { font-size: 4rem; margin-bottom: 1rem; }
-    .success h2 { color: #22c55e; margin-bottom: 0.5rem; }
-    .error { text-align: center; color: #f85149; }
-    .error h2 { color: #f85149; margin-bottom: 0.5rem; }
-    .hidden { display: none; }
-    .loading { text-align: center; padding: 2rem; }
-    .spinner { border: 3px solid #2a2a3a; border-top: 3px solid #6366f1; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 1rem; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: linear-gradient(135deg, #0a0a0f 0%, #1a1a25 100%); color: #e4e4e7; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+    .card { background: #12121a; border: 1px solid #2a2a3a; border-radius: 20px; padding: 3rem; max-width: 400px; width: 100%; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+    .success { display: none; }
+    .success.show { display: block; }
+    .form { display: block; }
+    .form.hide { display: none; }
+    .logo { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .logo span { color: #22c55e; }
+    h1 { font-size: 1.75rem; margin-bottom: 0.5rem; }
+    .subtitle { color: #a1a1aa; margin-bottom: 2rem; }
+    .amount-display { background: #1a1a25; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .amount-label { font-size: 0.875rem; color: #a1a1aa; margin-bottom: 0.5rem; }
+    .amount-value { font-size: 3rem; font-weight: 700; color: #22c55e; }
+    .btn { display: block; width: 100%; padding: 1.25rem; border-radius: 12px; font-size: 1.2rem; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; }
+    .btn-primary { background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; box-shadow: 0 10px 20px rgba(34,197,94,0.3); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(34,197,94,0.4); }
+    .secure { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1.5rem; font-size: 0.8rem; color: #a1a1aa; }
+    .success-icon { font-size: 5rem; margin-bottom: 1rem; }
+    .success h2 { color: #22c55e; margin-bottom: 1rem; }
+    .success p { color: #a1a1aa; }
+    .branding { margin-top: 2rem; font-size: 0.875rem; color: #a1a1aa; }
+    .branding a { color: #6366f1; }
   </style>
 </head>
 <body>
   <div class="card">
-    <div class="logo">CashFlow <span>AI</span></div>
-    
-    <div id="loadingView">
-      <div class="loading">
-        <div class="spinner"></div>
-        <p>Loading invoice...</p>
+    <div class="form" id="paymentForm">
+      <div class="logo">Money<span>X</span></div>
+      <h1>Secure Payment</h1>
+      <p class="subtitle">Fast, secure checkout</p>
+      
+      <div class="amount-display">
+        <div class="amount-label">Amount</div>
+        <div class="amount-value" id="displayAmount">$25</div>
+      </div>
+      
+      <button class="btn btn-primary" onclick="processPayment()">
+        💳 Pay Now
+      </button>
+      
+      <div class="secure">
+        <span>🔒 Secured by Stripe</span>
+      </div>
+      
+      <div class="branding">
+        <a href="https://cashflow-ai-40om.onrender.com/">Powered by MoneyX</a>
       </div>
     </div>
     
-    <div id="invoiceView" class="hidden">
-      <h1>Invoice Payment</h1>
-      <div class="invoice-info">
-        <div class="row">
-          <span class="label">Invoice #</span>
-          <span id="invoiceNumber">-</span>
-        </div>
-        <div class="row">
-          <span class="label">From</span>
-          <span id="fromName">-</span>
-        </div>
-        <div class="row">
-          <span class="label">Due Date</span>
-          <span id="dueDate">-</span>
-        </div>
-        <div class="row">
-          <span class="label">Amount</span>
-          <span class="amount" id="amount">$0.00</span>
-        </div>
-      </div>
-      <button class="btn btn-primary" onclick="payWithStripe()">Pay with Card</button>
-    </div>
-    
-    <div id="successView" class="success hidden">
-      <div class="success-icon">✓</div>
+    <div class="success" id="successView">
+      <div class="success-icon">✅</div>
       <h2>Payment Successful!</h2>
-      <p style="color: #a1a1aa; margin-top: 0.5rem;">Thank you for your payment.</p>
-      <p style="color: #a1a1aa; font-size: 0.875rem; margin-top: 1rem;">Redirecting to app...</p>
-    </div>
-    
-    <div id="canceledView" class="error hidden">
-      <h2>Payment Canceled</h2>
-      <p style="color: #a1a1aa; margin-top: 0.5rem;">You can try again anytime.</p>
-      <button class="btn btn-secondary" onclick="location.reload()">Try Again</button>
+      <p>Thank you for your payment.</p>
     </div>
   </div>
 
   <script>
     const params = new URLSearchParams(window.location.search);
-    let invoiceId = params.get('id') || params.get('d');
-    let invoiceData = null;
+    const amount = params.get('amount') || '25';
+    document.getElementById('displayAmount').textContent = '$' + amount;
     
     if (params.get('success') === 'true') {
-      document.getElementById('loadingView').classList.add('hidden');
-      document.getElementById('successView').classList.remove('hidden');
-      if (invoiceId) {
-        fetch(`/api/invoice/${invoiceId}/mark-paid`, { method: 'POST' }).then(() => {
-          setTimeout(() => window.location.href = '/app', 3000);
-        });
-      }
-    } else if (params.get('canceled') === 'true') {
-      document.getElementById('loadingView').classList.add('hidden');
-      document.getElementById('canceledView').classList.remove('hidden');
-    } else if (invoiceId) {
-      try {
-        invoiceData = JSON.parse(atob(invoiceId));
-        document.getElementById('invoiceNumber').textContent = invoiceData.inv || 'INV-0001';
-        document.getElementById('fromName').textContent = invoiceData.from || 'Business';
-        document.getElementById('dueDate').textContent = invoiceData.due || 'N/A';
-        document.getElementById('amount').textContent = '$' + parseFloat(invoiceData.amt || 0).toFixed(2);
-        document.getElementById('loadingView').classList.add('hidden');
-        document.getElementById('invoiceView').classList.remove('hidden');
-      } catch(e) {
-        document.getElementById('loadingView').classList.add('hidden');
-        document.getElementById('invoiceView').classList.remove('hidden');
-      }
-    } else {
-      document.getElementById('loadingView').classList.add('hidden');
-      document.getElementById('invoiceView').classList.remove('hidden');
+      document.getElementById('paymentForm').classList.add('hide');
+      document.getElementById('successView').classList.add('show');
     }
     
-    async function payWithStripe() {
+    async function processPayment() {
+      const amt = params.get('amount') || '25';
+      
       try {
-        const res = await fetch('/api/create-checkout-session', {
+        const res = await fetch('/api/quick-payment', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ invoiceId: invoiceData?.id })
+          body: JSON.stringify({ amount: amt, description: 'Quick Payment' })
         });
         
         const data = await res.json();
@@ -126,10 +88,10 @@
         if (data.url) {
           window.location.href = data.url;
         } else {
-          alert(data.error || 'Payment failed');
+          alert('Error: ' + (data.error || 'Payment failed'));
         }
       } catch(err) {
-        alert('Payment error');
+        alert('Payment error: ' + err.message);
       }
     }
   </script>

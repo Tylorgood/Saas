@@ -7,7 +7,9 @@
     "dev": "node server.js",
     "reminders": "node scripts/reminders.js",
     "report": "node scripts/weekly-report.js",
-    "billing": "node scripts/billing-automation.js"
+    "billing": "node scripts/billing-automation.js",
+    "stats": "node scripts/stats.js",
+    "watchdog": "node scripts/ceo-watchdog.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

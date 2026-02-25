@@ -274,6 +274,10 @@ app.get('/app', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+app.get('/payment', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'payment.html'));
+});
+
 app.get('/pay', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'pay.html'));
 });
@@ -327,27 +331,34 @@ app.post('/api/create-checkout-session', async (req, res) => {
   }
 });
 
-app.post('/api/test-payment', async (req, res) => {
+app.post('/api/quick-payment', async (req, res) => {
   if (!stripe) {
     return res.status(503).json({ error: 'Stripe not configured' });
   }
   
   try {
+    const { amount, description } = req.body;
+    
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ error: 'Invalid amount' });
+    }
+    
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [{
         price_data: {
           currency: 'usd',
           product_data: {
-            name: 'Test Payment - CashFlow AI'
+            name: description || 'Quick Payment',
+            description: 'Payment via MoneyX'
           },
-          unit_amount: 1000 // $10.00
+          unit_amount: Math.round(parseFloat(amount) * 100)
         },
         quantity: 1
       }],
       mode: 'payment',
-      success_url: `${req.protocol}://${req.get('host')}/pay?success=true`,
-      cancel_url: `${req.protocol}://${req.get('host')}/pay?canceled=true`
+      success_url: `${req.protocol}://${req.get('host')}/payment?success=true`,
+      cancel_url: `${req.protocol}://${req.get('host')}/payment?canceled=true`
     });
     
     res.json({ url: session.url });
